@@ -1,5 +1,5 @@
 {
-  "name": "@mtpluswebsystem/wappy",
+  "name": "@mtplusdev/wappy",
   "version": "1.0.0",
   "description": "Wappy é sua ponte entre ideias e mensagens. Crie bots com WhatsApp de forma simples.",
   "main": "src/index.js",
