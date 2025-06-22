@@ -47,6 +47,7 @@ export async function createWappy(options) {
           if (type !== 'notify') return;
 
           const msg = messages[0];
+          console.log(msg)
           if (!msg?.message) return;
 
           const { remoteJid } = msg.key || {};
@@ -82,7 +83,7 @@ export async function createWappy(options) {
           }
 
           if (viewLog){
-            console.log(```📩 Mensagem de ${remoteJid} \n⚡ Texto: ${text}```);
+            console.log(`📩 Mensagem de ${remoteJid} \n⚡ Texto: ${text}`);
           }
           callback({
             msg,
@@ -98,6 +99,14 @@ export async function createWappy(options) {
       return await sock.sendMessage(jid, { text });
     },
 
+    replay: async (jid, ReplayText, quotedMsg) => {
+        return await sock.sendMessage(
+          jid,
+          { text: ReplayText },
+          { quoted: quotedMsg }
+        );
+    },      
+    
     start: async () => {
       console.log('🟢 Wappy iniciado...');
     }

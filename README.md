@@ -1,10 +1,13 @@
 
-# Wappy · 💬
 
-**Wappy** é sua ponte entre ideias e mensagens.  
+# 🌐 Wappy · 💬🤖
+
+![Logo](https://em-content.zobj.net/source/microsoft-teams/337/speech-balloon_1f4ac.png)
+**Wappy** é sua ponte entre ideias e mensagens.
+
 Uma biblioteca simples e poderosa para criar bots, integrações e automações no WhatsApp usando a engine [Baileys](https://github.com/WhiskeySockets/Baileys).
 
-> Desenvolvido por [@MTplusWebSystem](https://github.com/MTplusWebSystem)
+> Desenvolvido com 💚 por [@MTplusWebSystem](https://github.com/MTplusWebSystem)
 
 ---
 
@@ -12,54 +15,74 @@ Uma biblioteca simples e poderosa para criar bots, integrações e automações 
 
 ```bash
 npm install @mtplusdev/wappy qrcode-terminal
-````
+```
 
-> A `qrcode-terminal` é usada para exibir o QR Code no terminal.
+> A `qrcode-terminal` exibe o QR Code diretamente no terminal.
 > Instale junto ao `wappy` no seu projeto.
 
 ---
 
-## ⚡ Exemplo rápido (1 arquivo)
+## ⚡ Exemplo rápido
 
 ```js
-// main.mjs
+// main.js
 import { createWappy } from '@mtplusdev/wappy';
 import qrcode from 'qrcode-terminal';
 
 const client = await createWappy({
   sessionName: 'teste',
   qrCallback: (qr) => qrcode.generate(qr, { small: true }),
-  Print: ({ remoteJid, text }) => {
-    console.log(`📩 ${remoteJid}: ${text}`);
-  }
+  viewLog: true, // ✅ Mostra logs básicos
+  fromMe: false, // ✅ Permite ou ignora mensagens enviadas por você mesmo
+  groupIgnore: true, // ✅ Ignora mensagens de grupos
 });
 
-client.on('message', ({ text, targetJid }) => {
+client.on('message', async ({ text, targetJid, msg }) => {
   if (text.toLowerCase() === 'ping') {
-    client.sendText(targetJid, '🏓 pong!');
+    await client.sendText(targetJid, '🏓 pong!');
+  }
+
+  if (text.toLowerCase() === 'replay') {
+    await client.replay(targetJid, '🔁 Isso é uma resposta com citação!', msg);
   }
 });
 
 client.start();
 ```
 
-> 💡 Esse código pode ser executado diretamente com `node main.mjs` se seu `package.json` tiver `"type": "module"`.
+> 💡 Execute com `node main.mjs` se seu `package.json` tiver `"type": "module"`.
+
+---
+
+## ✨ Novidades
+
+### 🔁 `replay(jid, text, quotedMsg)`
+
+Agora é possível responder mensagens com citação, como no WhatsApp tradicional.
+
+### ⚙️ Novos parâmetros na criação:
+
+| Parâmetro     | Descrição                                                              |
+| ------------- | ---------------------------------------------------------------------- |
+| `fromMe`      | Aceita ou ignora mensagens enviadas por você mesmo (`true` ou `false`) |
+| `groupIgnore` | Ignora mensagens de grupos (`true`)                                    |
+| `viewLog`     | Mostra log básico de mensagens recebidas no terminal (`true`)          |
 
 ---
 
 ## 🧱 Estrutura modular para projetos grandes
 
-Se quiser criar uma aplicação mais robusta, modular e organizada, siga este modelo básico:
+Se quiser criar uma aplicação robusta e escalável:
 
 ```
 /seu-projeto
-├── main.mjs           # ponto de entrada
-├── handler.js         # lida com mensagens
+├── main.js           # ponto de entrada
+├── handler.js        # manipulador de mensagens
 ├── package.json
-└── auth/              # sessão (gerada automaticamente)
+└── auth/             # sessões geradas automaticamente
 ```
 
-### `main.mjs`
+### `main.js`
 
 ```js
 import { createWappy } from '@mtplusdev/wappy';
@@ -69,9 +92,7 @@ import { handleMessage } from './handler.js';
 const client = await createWappy({
   sessionName: 'meu-bot',
   qrCallback: (qr) => qrcode.generate(qr, { small: true }),
-  Print: ({ remoteJid, text }) => {
-    console.log(`📩 ${remoteJid}: ${text}`);
-  }
+  viewLog: true
 });
 
 client.on('message', handleMessage(client));
@@ -82,11 +103,15 @@ client.start();
 
 ```js
 export function handleMessage(client) {
-  return async ({ text, targetJid }) => {
+  return async ({ text, targetJid, msg }) => {
     if (!text) return;
 
     if (text.toLowerCase() === 'ping') {
       await client.sendText(targetJid, '🏓 pong!');
+    }
+
+    if (text.toLowerCase() === 'responder') {
+      await client.replay(targetJid, '🔁 Resposta com citação!', msg);
     }
   };
 }
@@ -96,23 +121,24 @@ export function handleMessage(client) {
 
 ## 📂 Sessão e autenticação
 
-Por padrão, o Wappy salva a autenticação em:
+O Wappy salva sua sessão automaticamente em:
 
 ```
 auth/<sessionName>/
 ```
 
-Você pode deletar esse diretório para forçar novo login via QR Code.
+Para forçar um novo login, basta apagar essa pasta.
 
 ---
 
-## 🛠️ Recursos disponíveis
+## ✅ Recursos
 
-* 📡 Conexão automática via QR Code
+* 📡 Conexão com QR Code
 * 🔄 Reconexão automática
-* 💬 Escuta de mensagens com `text`
-* 🚀 Resposta programada (`sendText`)
-* ✅ Filtro automático para mensagens `notify` e chats privados
+* 💬 Escuta de mensagens com filtro
+* ✉️ Envio de mensagens (`sendText`)
+* 🔁 Resposta com citação (`replay`)
+* 🎯 Filtros para grupos e mensagens do próprio bot
 
 ---
 
@@ -120,3 +146,6 @@ Você pode deletar esse diretório para forçar novo login via QR Code.
 
 MIT
 
+---
+
+Se quiser, posso gerar essa doc já formatada em `.md` (Markdown) para você colar direto no repositório. Deseja isso?
