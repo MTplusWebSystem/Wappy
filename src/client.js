@@ -10,6 +10,7 @@ export async function createWappy(options) {
     logger = P({ level: 'silent' }),
     fromMe = false,
     groupIgnore = false,
+    viewLog = false,
   } = options;
 
   const { state, saveCreds } = await useMultiFileAuthState(`auth/${sessionName}`);
@@ -68,7 +69,6 @@ export async function createWappy(options) {
             msg.message?.videoMessage?.caption;
 
           if (!text) return;
-
           let targetJid = remoteJid;
           if (!remoteJid.includes('@lid')) {
             try {
@@ -81,6 +81,9 @@ export async function createWappy(options) {
             }
           }
 
+          if (viewLog){
+            console.log(```📩 Mensagem de ${remoteJid} \n⚡ Texto: ${text}```);
+          }
           callback({
             msg,
             text,
