@@ -32,6 +32,7 @@ import qrcode from 'qrcode-terminal';
 const client = await createWappy({
   sessionName: 'teste',
   qrCallback: (qr) => qrcode.generate(qr, { small: true }),
+  all: true, // ✅ Permite ou ignora mensagens enviadas por todos
   viewLog: true, // ✅ Mostra logs básicos
   fromMe: false, // ✅ Permite ou ignora mensagens enviadas por você mesmo
   groupIgnore: true, // ✅ Ignora mensagens de grupos
@@ -57,14 +58,37 @@ client.start();
 ## ✨ Novidades
 
 ### 🔁 `replay(jid, text, quotedMsg)`
+### 🔁 `sendDocument(jid, text, quotedMsg)`
 
-Agora é possível responder mensagens com citação, como no WhatsApp tradicional.
+
+Agora é possível responder mensagens com citação, como no WhatsApp tradicional e enviar arquivos.
+
+```js
+client.on('message', async ({ text, targetJid, msg }) => {
+  if (text.toLowerCase() === '/apk') {
+    const filePath = './storage/RVX_19.16.39.apk';
+
+    await client.sendDocument(targetJid, filePath, {
+      mimetype: 'application/vnd.android.package-archive',
+      fileName: 'youtubeMod.apk'
+    });
+
+    await client.replay(
+      targetJid,
+      "Seu apk foi enviado com sucesso...\nAgora logue com suas informações de teste.",
+      msg
+    );
+  }
+});
+```
+
 
 ### ⚙️ Novos parâmetros na criação:
 
 | Parâmetro     | Descrição                                                              |
 | ------------- | ---------------------------------------------------------------------- |
 | `fromMe`      | Aceita ou ignora mensagens enviadas por você mesmo (`true` ou `false`) |
+| `all`         | Aceita ou ignora mensagens enviadas por todos (`true` ou `false`)      |
 | `groupIgnore` | Ignora mensagens de grupos (`true`)                                    |
 | `viewLog`     | Mostra log básico de mensagens recebidas no terminal (`true`)          |
 

@@ -1,5 +1,8 @@
 import * as baileys from '@whiskeysockets/baileys';
 import P from 'pino';
+import * as fs from 'fs';
+import * as path from 'path';
+
 
 const { makeWASocket, useMultiFileAuthState, DisconnectReason } = baileys;
 
@@ -9,6 +12,7 @@ export async function createWappy(options) {
     qrCallback = (qr) => console.log('🆗 QR Code:', qr),
     logger = P({ level: 'silent' }),
     fromMe = false,
+    all = false,
     groupIgnore = false,
     viewLog = false,
   } = options;
@@ -47,7 +51,6 @@ export async function createWappy(options) {
           if (type !== 'notify') return;
 
           const msg = messages[0];
-          console.log(msg)
           if (!msg?.message) return;
 
           const { remoteJid } = msg.key || {};
@@ -57,10 +60,11 @@ export async function createWappy(options) {
           if (groupIgnore && remoteJid.endsWith('@g.us')) return;
 
           // Filtra mensagens com base no fromMe
-          if (fromMe) {
-            if (!msg.key.fromMe) return;
-          } else {
-            if (msg.key.fromMe) return;
+          const isFromMe = !!msg.key.fromMe;
+
+          if (!all) {
+            if (fromMe === true && !isFromMe) return;
+            if (fromMe === false && isFromMe) return;
           }
 
           const text =
@@ -105,8 +109,18 @@ export async function createWappy(options) {
           { text: ReplayText },
           { quoted: quotedMsg }
         );
-    },      
-    
+    },
+
+    sendDocument: async (jid, filePath, options = {}) => {
+        const fileBuffer = fs.readFileSync(filePath);
+        return await sock.sendMessage(jid, {
+          document: fileBuffer,
+          mimetype: options.mimetype || 'application/octet-stream',
+          fileName: options.fileName || path.basename(filePath)
+        });
+      }
+    ,      
+
     start: async () => {
       console.log('🟢 Wappy iniciado...');
     }
