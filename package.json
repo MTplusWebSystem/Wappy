@@ -1,0 +1,25 @@
+{
+  "name": "wappy",
+  "version": "1.0.0",
+  "description": "Wappy é sua ponte entre ideias e mensagens. Uma biblioteca amigável para construir bots, integrações e experiências via WhatsApp.",
+  "homepage": "https://github.com/MTplusWebSystem/Wappy#readme",
+  "bugs": {
+    "url": "https://github.com/MTplusWebSystem/Wappy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MTplusWebSystem/Wappy.git"
+  },
+  "license": "ISC",
+  "author": "MTplus WebSystem",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.18",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
