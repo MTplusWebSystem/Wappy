@@ -8,3 +8,6 @@ pnpm-debug.log*
 # Diretórios de autenticação do Baileys
 auth/
 teste/
+
+#package-lock
+package-lock.json
