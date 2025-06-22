@@ -9,5 +9,8 @@ pnpm-debug.log*
 auth/
 teste/
 
+#bot de testes
+bot.js
+
 #package-lock
 package-lock.json

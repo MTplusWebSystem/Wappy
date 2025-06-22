@@ -1,5 +1,5 @@
 {
-  "name": "wappy",
+  "name": "@MTplusWebSystem/wappy",
   "version": "1.0.0",
   "description": "Wappy é sua ponte entre ideias e mensagens. Uma biblioteca amigável para construir bots, integrações e experiências via WhatsApp.",
   "homepage": "https://github.com/MTplusWebSystem/Wappy#readme",
