@@ -172,4 +172,3 @@ MIT
 
 ---
 
-Se quiser, posso gerar essa doc já formatada em `.md` (Markdown) para você colar direto no repositório. Deseja isso?

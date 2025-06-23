@@ -56,17 +56,24 @@ export async function createWappy(options) {
           const { remoteJid } = msg.key || {};
           if (!remoteJid) return;
 
-          // Ignora mensagens de grupo se configurado para isso
-          if (groupIgnore && remoteJid.endsWith('@g.us')) return;
-
-          // Filtra mensagens com base no fromMe
           const isFromMe = !!msg.key.fromMe;
 
-          if (!all) {
-            if (fromMe === true && !isFromMe) return;
-            if (fromMe === false && isFromMe) return;
+          // 🔒 Ignora mensagens de grupos, se ativado
+          if (groupIgnore && remoteJid.endsWith('@g.us')) return;
+          
+          // 🎯 Regras de prioridade
+          if (fromMe) {
+            // Só responde mensagens do próprio dono
+            if (!isFromMe) return;
+          } else {
+            if (all) {
+              // Responde todas — nada a filtrar
+            } else {
+              // all === false → responde só usuários externos
+              if (isFromMe) return;
+            }
           }
-
+          
           const text =
             msg.message?.conversation ||
             msg.message?.extendedTextMessage?.text ||
