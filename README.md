@@ -71,7 +71,8 @@ const client = await createWappy({
 ```
 retorno no /data
 
-ex: ```json
+ex: 
+```json
 {
 	"qrCode": "2@B9K5q7U7VrKG4ZgmE8XAW5osqzOIVgeA/YxQvlwbvhI52S6kbw6ehQMw+8KBRKRfl4vr6QLrpxur77DShXqS6Rltl4y97zABq8A=,lwL8/4vwgvKOvD6njZ/Da4i6EDZPLZIoBtndFa+Y6C0=,d9VzKcnYTMWJ4ki4tJ2VRT2nAKmoZXdYU4/Ozm/SKG8=,wnRChE2+ZXzbd4E0S0wwczJYnqrwywlhciYwfUsa/U4=",
 	"pairCode": null
