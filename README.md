@@ -58,7 +58,7 @@ client.start();
 ## ⚡ Exemplo rápido qr-server
 
 ```js
-import { createWappy,createServer,startServe } from './src/client.js';
+import { createWappy } from '@mtplusdev/wappy';
 
 const client = await createWappy({
   sessionName: 'teste',
