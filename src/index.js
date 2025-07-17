@@ -1,1 +1,27 @@
-export { createWappy } from './client.js'
+// bot.js
+import { createWappy } from './src/client.js';
+
+const client = await createWappy({
+  sessionName: 'wappy-bot',
+  viewLog: true,
+  all: true,
+  groupIgnore: true,
+  connectionNumber: '5567996520842', // Ativa login via número
+  server: { status: true, serverPort: 4000 },
+});
+
+client.on('message', async ({ text, targetJid, msg }) => {
+  if (text.toLowerCase() === '/apk') {
+    await client.sendDocument(targetJid, './storage/RVX_19.16.39.apk', {
+      mimetype: 'application/vnd.android.package-archive',
+      fileName: 'youtubeMod.apk',
+    });
+    await client.replay(
+      targetJid,
+      'Seu APK foi enviado com sucesso...',
+      msg
+    );
+  }
+});
+
+await client.start();
