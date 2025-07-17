@@ -58,19 +58,21 @@ client.start();
 ## ⚡ Exemplo rápido qr-server
 
 ```js
-// main.js
-import { createWappy } from '@mtplusdev/wappy';
-import qrcode from 'qrcode-terminal';
+import { createWappy,createServer,startServe } from './src/client.js';
 
 const client = await createWappy({
   sessionName: 'teste',
-  printQRInTerminal: true,
-  qrCallback: (qr) => qrcode.generate(qr, { small: true }),
+  qrCallback: (qr) => {
+    createServer(qr)
+    return qr;
+  },
   all: true, // ✅ Permite ou ignora mensagens enviadas por todos
   viewLog: true, // ✅ Mostra logs básicos
   fromMe: false, // ✅ Permite ou ignora mensagens enviadas por você mesmo
   groupIgnore: true, // ✅ Ignora mensagens de grupos
 });
+
+startServe("4000")
 
 client.on('message', async ({ text, targetJid, msg }) => {
   if (text.toLowerCase() === 'ping') {
@@ -95,14 +97,13 @@ client.start();
 
 ```js
 const client = await createWappy({
-  sessionName: 'wappy-bot',
-  viewLog: true,
-  all: true,
-  groupIgnore: true,
-  server: { status: true, serverPort: 4000 },
+  qrCallback: (qr) => {
+    createServer(qr)
+    return qr;
+  },
 });
 ```
-retorno no /data
+retorno no /qr-connection
 
 ex: 
 ```json
