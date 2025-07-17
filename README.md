@@ -14,7 +14,7 @@ Uma biblioteca simples e poderosa para criar bots, integrações e automações 
 ## 🚀 Instalação
 
 ```bash
-npm install @mtplusdev/wappy qrcode-terminal express
+npm install @mtplusdev/wappy qrcode-terminal express cors
 ```
 
 > A `qrcode-terminal` exibe o QR Code diretamente no terminal.
@@ -22,7 +22,40 @@ npm install @mtplusdev/wappy qrcode-terminal express
 > Server fornece a payload para conversão em qr-code
 ---
 
-## ⚡ Exemplo rápido
+## ⚡ Exemplo rápido qr-terminal
+
+```js
+// main.js
+import { createWappy } from '@mtplusdev/wappy';
+import qrcode from 'qrcode-terminal';
+
+const client = await createWappy({
+  sessionName: 'teste',
+  printQRInTerminal: true,
+  qrCallback: (qr) => qrcode.generate(qr, { small: true }),
+  all: true, // ✅ Permite ou ignora mensagens enviadas por todos
+  viewLog: true, // ✅ Mostra logs básicos
+  fromMe: false, // ✅ Permite ou ignora mensagens enviadas por você mesmo
+  groupIgnore: true, // ✅ Ignora mensagens de grupos
+});
+
+client.on('message', async ({ text, targetJid, msg }) => {
+  if (text.toLowerCase() === 'ping') {
+    await client.sendText(targetJid, '🏓 pong!');
+  }
+
+  if (text.toLowerCase() === 'replay') {
+    await client.replay(targetJid, '🔁 Isso é uma resposta com citação!', msg);
+  }
+});
+
+client.start();
+```
+
+> 💡 Execute com `node main.mjs` se seu `package.json` tiver `"type": "module"`.
+
+---
+## ⚡ Exemplo rápido qr-server
 
 ```js
 // main.js
