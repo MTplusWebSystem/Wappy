@@ -31,6 +31,7 @@ import qrcode from 'qrcode-terminal';
 
 const client = await createWappy({
   sessionName: 'teste',
+  printQRInTerminal: true,
   qrCallback: (qr) => qrcode.generate(qr, { small: true }),
   all: true, // ✅ Permite ou ignora mensagens enviadas por todos
   viewLog: true, // ✅ Mostra logs básicos
