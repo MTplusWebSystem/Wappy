@@ -14,12 +14,12 @@ Uma biblioteca simples e poderosa para criar bots, integrações e automações 
 ## 🚀 Instalação
 
 ```bash
-npm install @mtplusdev/wappy qrcode-terminal
+npm install @mtplusdev/wappy qrcode-terminal express
 ```
 
 > A `qrcode-terminal` exibe o QR Code diretamente no terminal.
 > Instale junto ao `wappy` no seu projeto.
-
+> Server fornece a payload para conversão em qr-code
 ---
 
 ## ⚡ Exemplo rápido
@@ -56,6 +56,26 @@ client.start();
 ---
 
 ## ✨ Novidades
+
+###  `🚀 Server` 
+
+```js
+const client = await createWappy({
+  sessionName: 'wappy-bot',
+  viewLog: true,
+  all: true,
+  groupIgnore: true,
+  server: { status: true, serverPort: 4000 },
+});
+```
+retorno no /data
+
+ex: ```json
+{
+	"qrCode": "2@B9K5q7U7VrKG4ZgmE8XAW5osqzOIVgeA/YxQvlwbvhI52S6kbw6ehQMw+8KBRKRfl4vr6QLrpxur77DShXqS6Rltl4y97zABq8A=,lwL8/4vwgvKOvD6njZ/Da4i6EDZPLZIoBtndFa+Y6C0=,d9VzKcnYTMWJ4ki4tJ2VRT2nAKmoZXdYU4/Ozm/SKG8=,wnRChE2+ZXzbd4E0S0wwczJYnqrwywlhciYwfUsa/U4=",
+	"pairCode": null
+}
+```
 
 ### 🔁 `replay(jid, text, quotedMsg)`
 ### 🔁 `sendDocument(jid, text, quotedMsg)`

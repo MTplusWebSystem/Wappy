@@ -38,7 +38,7 @@ export async function createWappy(options) {
       res.json({ qrCode: latestQrCode, pairCode: latestPairCode });
     });
     app.listen(server.serverPort, () =>
-      console.log(`🚀 Server at http://localhost:${server.serverPort}/data`)
+      console.log(`🚀 Server --> http://localhost:${server.serverPort}/data`)
     );
   }
 
