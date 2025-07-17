@@ -1,4 +1,2 @@
-import { 
-    createWappy ,
-    createServer,
-    startServe } from './client.js'
+
+export { createWappy, createServer, startServe } from './client.js';
