@@ -8,6 +8,7 @@ const { makeWASocket, useMultiFileAuthState, DisconnectReason } = baileys;
 
 import express from 'express';
 const app = express();
+export const net = express();
 import cors from 'cors';
 
 let latestQrCode = null;
