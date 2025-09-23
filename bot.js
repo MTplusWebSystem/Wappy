@@ -1,4 +1,4 @@
-import { createWappy,createServer,startServe } from './src/client.js';
+import app, { createWappy,createServer,startServe} from './src/client.js';
 
 const client = await createWappy({
   sessionName: 'teste',
@@ -13,6 +13,12 @@ const client = await createWappy({
 });
 
 startServe("4000")
+
+
+app.get('/', (req, res) => {
+  res.send('Olá, mundo!');
+});
+
 
 client.on('message', async ({ text, targetJid, msg }) => {
   if (text.toLowerCase() === 'ping') {

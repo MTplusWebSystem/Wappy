@@ -1,1 +1,3 @@
-export { createWappy, createServer, startServe, net } from './client.js';
+export { createWappy, createServer, startServe, app } from './client.js';
+module.exports = app;
+export default app;

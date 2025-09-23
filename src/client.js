@@ -8,7 +8,8 @@ const { makeWASocket, useMultiFileAuthState, DisconnectReason } = baileys;
 
 import express from 'express';
 const app = express();
-export const net = express();
+export default app;
+
 import cors from 'cors';
 
 let latestQrCode = null;
@@ -41,6 +42,7 @@ export async function createWappy(options) {
     all = false,
     groupIgnore = false,
     viewLog = false,
+    fulLog = false,
   } = options;
 
   const { state, saveCreds } = await useMultiFileAuthState(`auth/${sessionName}`);
@@ -72,7 +74,11 @@ export async function createWappy(options) {
   sock.ev.on('creds.update', saveCreds);
 
   return {
+
     on: (event, callback) => {
+      if(fulLog){
+        console.log(event)
+      }
       if (event === 'message') {
         sock.ev.on('messages.upsert', async ({ messages, type }) => {
           if (type !== 'notify') return;
@@ -160,3 +166,5 @@ export async function createWappy(options) {
     }
   };
 }
+
+module.exports = app;
