@@ -1,15 +1,7 @@
 {
   "name": "@mtplusdev/wappy",
-  "version": "1.0.10",
+  "version": "1.0.13",
   "description": "Wappy é sua ponte entre ideias e mensagens. Crie bots com WhatsApp de forma simples.",
-  "main": "src/index.js",
-  "type": "module",
-  "author": "MTplus WebSystem",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MTplusWebSystem/Wappy.git"
-  },
   "keywords": [
     "whatsapp",
     "baileys",
@@ -17,19 +9,34 @@
     "bot",
     "zap"
   ],
+  "homepage": "https://github.com/MTplusWebSystem/Wappy#readme",
   "bugs": {
     "url": "https://github.com/MTplusWebSystem/Wappy/issues"
   },
-  "homepage": "https://github.com/MTplusWebSystem/Wappy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MTplusWebSystem/Wappy.git"
+  },
+  "license": "MIT",
+  "author": "MTplus WebSystem",
+  "type": "module",
+  "main": "src/index.js",
   "files": [
     "src",
     "README.md"
   ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.18",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "pino": "^8.0.0",
     "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public"
   }
 }
