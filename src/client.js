@@ -57,6 +57,125 @@ export async function createWappy(options) {
     logger,
   });
 
+    // ----- Helpers para logging seguro e sumarização de mensagens -----
+    function safeStringify(obj, space = 2) {
+      const seen = new WeakSet();
+      return JSON.stringify(obj, function (key, val) {
+        // detectar TypedArrays / Buffers
+        if (val && (val instanceof Uint8Array || ArrayBuffer.isView(val))) {
+          return `[Uint8Array len=${val.byteLength || val.length}]`;
+        }
+        if (typeof val === 'function') return `[Function ${val.name || 'anonymous'}]`;
+        if (val instanceof Error) return { message: val.message, stack: val.stack };
+        if (typeof val === 'bigint') return val.toString() + 'n';
+        if (val && typeof val === 'object') {
+          if (seen.has(val)) return '[Circular]';
+          seen.add(val);
+        }
+        return val;
+      }, space);
+    }
+  
+    function safeLog(label, obj) {
+      try {
+        console.log(`🔍 ${label}:`, safeStringify(obj));
+      } catch (e) {
+        console.log(`🔍 ${label}: [erro ao serializar]`, e);
+      }
+    }
+  
+    function summarizeMessage(msg) {
+      const messageObj = msg?.message || {};
+      const ext = messageObj?.extendedTextMessage || {};
+      const text =
+        messageObj?.conversation ||
+        ext?.text ||
+        messageObj?.imageMessage?.caption ||
+        messageObj?.videoMessage?.caption ||
+        messageObj?.documentMessage?.fileName ||
+        messageObj?.audioMessage?.fileName ||
+        null;
+  
+      const quotedInfo = ext?.contextInfo?.quotedMessage
+        ? {
+            stanzaId: ext.contextInfo.stanzaId || null,
+            participant: ext.contextInfo.participant || null,
+            quotedText:
+              ext.contextInfo.quotedMessage?.conversation ||
+              ext.contextInfo.quotedMessage?.imageMessage?.caption ||
+              ext.contextInfo.quotedMessage?.videoMessage?.caption ||
+              null,
+          }
+        : null;
+  
+      return {
+        id: msg?.key?.id || null,
+        remoteJid: msg?.key?.remoteJid || null,
+        fromMe: !!msg?.key?.fromMe,
+        pushName: msg?.pushName || null,
+        timestamp:
+          msg?.messageTimestamp ||
+          msg?.message?.timestamp ||
+          msg?.key?.t ||
+          (msg?.messageTimestamp && Number(msg.messageTimestamp)) ||
+          null,
+        messageTypes: Object.keys(messageObj),
+        text,
+        hasMedia: !!(
+          messageObj?.imageMessage ||
+          messageObj?.videoMessage ||
+          messageObj?.documentMessage ||
+          messageObj?.audioMessage
+        ),
+        mediaInfo: {
+          image: !!messageObj?.imageMessage,
+          video: !!messageObj?.videoMessage,
+          document: !!messageObj?.documentMessage,
+          audio: !!messageObj?.audioMessage,
+        },
+        quoted: quotedInfo,
+      };
+    }
+  
+    // ----- Full log de eventos (inclui mensagens com resumo) -----
+    if (fulLog) {
+      // eventos de mensagens
+      sock.ev.on('messages.upsert', (m) => {
+        safeLog('messages.upsert (raw)', m);
+        try {
+          const msgs = m?.messages || [];
+          for (const msg of msgs) {
+            const sum = summarizeMessage(msg);
+            console.log('✉️ messages.upsert (summary):', safeStringify(sum, 2));
+          }
+        } catch (e) {
+          console.warn('Erro ao resumir messages.upsert:', e);
+        }
+      });
+  
+      sock.ev.on('messages.update', (m) => {
+        safeLog('messages.update', m);
+      });
+  
+      sock.ev.on('messages.delete', (m) => {
+        safeLog('messages.delete', m);
+      });
+  
+      // reações (se houver no baileys que você usa)
+      sock.ev.on('messages.reaction', (m) => {
+        safeLog('messages.reaction', m);
+      });
+  
+      // outros eventos úteis
+      sock.ev.on('connection.update', (c) => safeLog('connection.update', c));
+      sock.ev.on('creds.update', (c) => safeLog('creds.update', c));
+      sock.ev.on('contacts.upsert', (c) => safeLog('contacts.upsert', c));
+      sock.ev.on('chats.upsert', (c) => safeLog('chats.upsert', c));
+      sock.ev.on('chats.update', (c) => safeLog('chats.update', c));
+      sock.ev.on('chats.delete', (c) => safeLog('chats.delete', c));
+      sock.ev.on('groups.update', (g) => safeLog('groups.update', g));
+      sock.ev.on('group-participants.update', (g) => safeLog('group-participants.update', g));
+    }
   
   sock.ev.on('connection.update', (update) => {
     const { connection, qr, lastDisconnect } = update;
@@ -77,12 +196,6 @@ export async function createWappy(options) {
   });
 
   sock.ev.on('creds.update', saveCreds);
-
-  if (fulLog) {
-    sock.ev.onAny((eventName, eventData) => {
-      console.log('📌 Evento:', eventName, eventData);
-    });
-  }
 
   return {
 
@@ -134,8 +247,10 @@ export async function createWappy(options) {
             }
           }
 
-          if (viewLog){
-            console.log(`📩 Mensagem de ${remoteJid} \n⚡ Texto: ${text}`);
+          if (viewLog) {
+            console.log(
+              `📩 Mensagem de ${remoteJid} (${msg.pushName || "Sem nome"})\n⚡ Texto: ${text}`
+            );
           }
           callback({
             msg,
@@ -175,3 +290,44 @@ export async function createWappy(options) {
   };
 }
 
+export async function SendText(phoneNumber, message) {
+  try {
+    // Verifica se o socket está inicializado
+    if (!sock) {
+      throw new Error('WhatsApp socket não está inicializado. Certifique-se de que a conexão foi estabelecida.');
+    }
+
+    // Formata o número de telefone (adiciona @s.whatsapp.net para o JID)
+    const jid = `${phoneNumber}@s.whatsapp.net`;
+
+    // Envia a mensagem de texto
+    await sock.sendMessage(jid, { text: message });
+
+    console.log(`Mensagem enviada para ${phoneNumber}: ${message}`);
+    return { success: true, message: `Mensagem enviada com sucesso para ${phoneNumber}` };
+  } catch (error) {
+    console.error(`Erro ao enviar mensagem para ${phoneNumber}:`, error);
+    return { success: false, error: `Falha ao enviar mensagem: ${error.message}` };
+  }
+}
+
+export async function SendText(JID, message) {
+  try {
+    // Verifica se o socket está inicializado
+    if (!sock) {
+      throw new Error('WhatsApp socket não está inicializado. Certifique-se de que a conexão foi estabelecida.');
+    }
+
+    // Formata o número de telefone (adiciona @s.whatsapp.net para o JID)
+    const jid = JID;
+
+    // Envia a mensagem de texto
+    await sock.sendMessage(jid, { text: message });
+
+    console.log(`Mensagem enviada para ${phoneNumber}: ${message}`);
+    return { success: true, message: `Mensagem enviada com sucesso para ${phoneNumber}` };
+  } catch (error) {
+    console.error(`Erro ao enviar mensagem para ${phoneNumber}:`, error);
+    return { success: false, error: `Falha ao enviar mensagem: ${error.message}` };
+  }
+}
