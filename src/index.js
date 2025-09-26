@@ -1,1 +1,1 @@
-export { createWappy, createServer, startServe, createApp } from './client.js';
+export { createWappy, createServer, startServe, createApp ,SendText } from './client.js';

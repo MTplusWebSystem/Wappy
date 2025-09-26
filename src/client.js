@@ -290,27 +290,6 @@ export async function createWappy(options) {
   };
 }
 
-export async function SendText(phoneNumber, message) {
-  try {
-    // Verifica se o socket está inicializado
-    if (!sock) {
-      throw new Error('WhatsApp socket não está inicializado. Certifique-se de que a conexão foi estabelecida.');
-    }
-
-    // Formata o número de telefone (adiciona @s.whatsapp.net para o JID)
-    const jid = `${phoneNumber}@s.whatsapp.net`;
-
-    // Envia a mensagem de texto
-    await sock.sendMessage(jid, { text: message });
-
-    console.log(`Mensagem enviada para ${phoneNumber}: ${message}`);
-    return { success: true, message: `Mensagem enviada com sucesso para ${phoneNumber}` };
-  } catch (error) {
-    console.error(`Erro ao enviar mensagem para ${phoneNumber}:`, error);
-    return { success: false, error: `Falha ao enviar mensagem: ${error.message}` };
-  }
-}
-
 export async function SendText(JID, message) {
   try {
     // Verifica se o socket está inicializado
